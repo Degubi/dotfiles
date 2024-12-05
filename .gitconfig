@@ -1,0 +1,9 @@
+[user]
+	name = Degubi
+	email = gergonoorbi@gmail.com
+[credential]
+	helper = store
+[fetch]
+	prune = true
+[core]
+	autocrlf = true
