@@ -1,37 +1,34 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = false
+vim.g.netrw_liststyle = 3
+vim.g.netrw_banner = 0
 
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.mouse = 'a'
-vim.opt.showmode = false
-vim.opt.clipboard = 'unnamedplus'
-vim.opt.breakindent = true
-vim.opt.undofile = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.signcolumn = 'yes'
-vim.opt.updatetime = 250
-vim.opt.timeoutlen = 1000
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-vim.opt.inccommand = 'split'
-vim.opt.cursorline = true
-vim.opt.scrolloff = 10
-vim.opt.endofline = false
-vim.opt.fixendofline = false
-
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.mouse = 'a'
+vim.o.showmode = false
+vim.o.clipboard = 'unnamedplus'
+vim.o.breakindent = true
+vim.o.undofile = true
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.signcolumn = 'yes'
+vim.o.updatetime = 250
+vim.o.timeoutlen = 1000
+vim.o.splitright = true
+vim.o.splitbelow = true
+vim.o.list = true
+vim.o.listchars = 'tab:» ,trail:·,nbsp:␣'
+vim.o.cursorline = true
+vim.o.scrolloff = 5
+vim.o.endofline = false
+vim.o.fixendofline = false
 vim.o.tabstop = 4
 vim.o.expandtab = true
 vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.wrap = false
-
-vim.g.netrw_liststyle = 3
-vim.g.netrw_banner = 0
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
@@ -62,32 +59,20 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', 'https://github.com/folke/lazy.nvim.git', lazypath }
   if vim.v.shell_error ~= 0 then
     error('Error cloning lazy.nvim:\n' .. out)
   end
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
+end
+vim.o.rtp = lazypath .. ',' .. vim.o.rtp
 
 require('lazy').setup({
-  'tpope/vim-sleuth',
-
   {
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      {
-        'nvim-telescope/telescope-fzf-native.nvim',
-
-        build = 'make',
-        cond = function()
-          return vim.fn.executable 'make' == 1
-        end,
-      },
-      { 'nvim-telescope/telescope-ui-select.nvim' },
+      'nvim-telescope/telescope-ui-select.nvim'
     },
     config = function()
       local telescope = require('telescope')
@@ -95,13 +80,11 @@ require('lazy').setup({
       telescope.setup {
         extensions = {
           ['ui-select'] = {
-            require('telescope.themes').get_dropdown(),
-          },
+            require('telescope.themes').get_dropdown()
+          }
         },
         defaults = {
-          preview = {
-            hide_on_startup = true
-          }
+          preview = { hide_on_startup = true }
         }
       }
 
@@ -109,26 +92,22 @@ require('lazy').setup({
       pcall(telescope.load_extension, 'ui-select')
 
       local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps)
       vim.keymap.set('n', '<leader>sf', builtin.find_files)
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string)
       vim.keymap.set('n', '<leader>sg', builtin.live_grep)
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics)
       vim.keymap.set('n', '<leader>sr', builtin.resume)
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles)
       vim.keymap.set('n', '<leader><leader>', builtin.buffers)
-      vim.keymap.set('n', '<leader>sb', function() builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown { winblend = 10 }) end)
     end
   },
-
   {
     'folke/lazydev.nvim',
     ft = 'lua',
     opts = {
       library = {
-        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
-      },
-    },
+        { path = 'luvit-meta/library', words = { 'vim%.uv' } }
+      }
+    }
   },
   { 'Bilal2453/luvit-meta', lazy = true },
   {
@@ -138,7 +117,7 @@ require('lazy').setup({
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       { 'j-hui/fidget.nvim', opts = {} },
-      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lsp'
     },
     config = function()
       vim.api.nvim_create_autocmd('LspAttach', {
@@ -149,11 +128,10 @@ require('lazy').setup({
           vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = event.buf })
           vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = event.buf })
           vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>D', builtin.lsp_type_definitions, { buffer = event.buf })
           vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
           vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
           vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = event.buf })
-          vim.keymap.set({ 'n', 'x' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
+          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
           vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -187,7 +165,6 @@ require('lazy').setup({
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       local servers = {
-        rust_analyzer = {},
         cssls = {},
         html = {},
         jsonls = {},
@@ -196,11 +173,11 @@ require('lazy').setup({
           settings = {
             Lua = {
               completion = {
-                callSnippet = 'Replace',
-              },
-            },
-          },
-        },
+                callSnippet = 'Replace'
+              }
+            }
+          }
+        }
       }
 
       require('mason').setup()
@@ -211,10 +188,10 @@ require('lazy').setup({
             local server = servers[server_name] or {}
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
-          end,
-        },
+          end
+        }
       }
-    end,
+    end
   },
   {
     'hrsh7th/nvim-cmp',
@@ -228,7 +205,7 @@ require('lazy').setup({
           end
           return 'make install_jsregexp'
         end)(),
-        dependencies = {},
+        dependencies = {}
       },
       'saadparwaiz1/cmp_luasnip',
       'hrsh7th/cmp-nvim-lsp',
@@ -245,28 +222,27 @@ require('lazy').setup({
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
-          end,
+          end
         },
         completion = {
           autocomplete = false,
-          completeopt = 'menu,menuone,noinsert',
+          completeopt = 'menu,menuone,noinsert'
         },
         mapping = cmp.mapping.preset.insert {
           ['<C-j>'] = cmp.mapping.select_next_item(),
           ['<C-k>'] = cmp.mapping.select_prev_item(),
           ['<CR>'] = cmp.mapping.confirm { select = true },
-          ['<C-Space>'] = cmp.mapping.complete {},
+          ['<C-Space>'] = cmp.mapping.complete {}
         },
         sources = {
           { name = 'nvim_lsp' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'path' },
-          { name = 'buffer' },
-        },
+          { name = 'buffer' }
+        }
       }
-    end,
+    end
   },
-
   {
     'folke/tokyonight.nvim',
     priority = 1000,
@@ -282,7 +258,6 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end
   },
-
   {
     'echasnovski/mini.nvim',
     config = function()
@@ -290,18 +265,14 @@ require('lazy').setup({
 
       local statusline = require('mini.statusline')
       statusline.setup { use_icons = vim.g.have_nerd_font }
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
-    end,
+      statusline.section_location = function() return '%2l:%-2v' end
+    end
   },
   {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
     opts = {
-      ensure_installed = { 'html', 'css', 'javascript', 'jsdoc', 'lua', 'luadoc', 'markdown' },
       auto_install = true,
       highlight = { enable = true }
     }
@@ -321,7 +292,7 @@ require('lazy').setup({
       source = '📄',
       start = '🚀',
       task = '📌',
-      lazy = '💤 ',
-    },
-  },
+      lazy = '💤 '
+    }
+  }
 })
