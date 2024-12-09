@@ -31,7 +31,6 @@ vim.o.shiftwidth = 4
 vim.o.wrap = false
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>')
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>')
@@ -109,7 +108,6 @@ require('lazy').setup({
       }
     }
   },
-  { 'Bilal2453/luvit-meta', lazy = true },
   {
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -131,8 +129,10 @@ require('lazy').setup({
           vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
           vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
           vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
+          vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
           vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
+          vim.keymap.set('n', '<leader>ne', vim.diagnostic.goto_next, { buffer = event.buf })
+          vim.keymap.set('n', '<leader>pe', vim.diagnostic.goto_prev, { buffer = event.buf })
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
@@ -155,7 +155,7 @@ require('lazy').setup({
               callback = function(event2)
                 vim.lsp.buf.clear_references()
                 vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-              end,
+              end
             })
           end
         end
