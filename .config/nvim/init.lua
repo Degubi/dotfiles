@@ -1,3 +1,5 @@
+vim.cmd('syntax off')
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = false
@@ -274,7 +276,10 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs',
     opts = {
       auto_install = true,
-      highlight = { enable = true }
+      highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = false
+      }
     }
   }
 }, {
