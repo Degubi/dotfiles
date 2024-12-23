@@ -86,6 +86,18 @@ require('lazy').setup({
         },
         defaults = {
           preview = { hide_on_startup = true }
+        },
+        pickers = {
+          live_grep = {
+            previewer = true
+          },
+          buffers = {
+            mappings = {
+              n = {
+                ['dd'] = require('telescope.actions').delete_buffer
+              }
+            }
+          }
         }
       }
 
@@ -94,10 +106,9 @@ require('lazy').setup({
 
       local builtin = require('telescope.builtin')
       vim.keymap.set('n', '<leader>sf', builtin.find_files)
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep)
+      vim.keymap.set('n', '<leader>sg', function() builtin.live_grep({ additional_args = { "--fixed-strings" } }) end)
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics)
       vim.keymap.set('n', '<leader>sr', builtin.resume)
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles)
       vim.keymap.set('n', '<leader><leader>', builtin.buffers)
     end
   },
