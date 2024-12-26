@@ -91,6 +91,9 @@ require('lazy').setup({
           live_grep = {
             previewer = true
           },
+          lsp_references = {
+            previewer = true
+          },
           buffers = {
             mappings = {
               n = {
