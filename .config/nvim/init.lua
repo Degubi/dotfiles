@@ -3,7 +3,6 @@ vim.cmd('syntax off')
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = false
-vim.g.netrw_liststyle = 3
 vim.g.netrw_banner = 0
 
 vim.o.number = true
@@ -38,7 +37,6 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>')
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>')
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>')
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>')
-vim.keymap.set('n', '<leader>fe', '<cmd>Explore<CR>')
 vim.keymap.set('n', '<S-l>', '<cmd>bn<CR>')
 vim.keymap.set('n', '<S-h>', '<cmd>bp<CR>')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
@@ -88,12 +86,8 @@ require('lazy').setup({
           preview = { hide_on_startup = true }
         },
         pickers = {
-          live_grep = {
-            previewer = true
-          },
-          lsp_references = {
-            previewer = true
-          },
+          live_grep = { previewer = true },
+          lsp_references = { previewer = true },
           buffers = {
             mappings = {
               n = {
@@ -116,20 +110,10 @@ require('lazy').setup({
     end
   },
   {
-    'folke/lazydev.nvim',
-    ft = 'lua',
-    opts = {
-      library = {
-        { path = 'luvit-meta/library', words = { 'vim%.uv' } }
-      }
-    }
-  },
-  {
     'neovim/nvim-lspconfig',
     dependencies = {
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
       { 'j-hui/fidget.nvim', opts = {} },
       'hrsh7th/cmp-nvim-lsp'
     },
@@ -144,7 +128,7 @@ require('lazy').setup({
           vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
           vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
           vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = event.buf })
+          vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
           vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
           vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
           vim.keymap.set('n', '<leader>ne', vim.diagnostic.goto_next, { buffer = event.buf })
@@ -177,33 +161,14 @@ require('lazy').setup({
         end
       })
 
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-
-      local servers = {
-        cssls = {},
-        html = {},
-        jsonls = {},
-        ts_ls = {},
-        lua_ls = {
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace'
-              }
-            }
-          }
-        }
-      }
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      local lspconfig = require('lspconfig')
 
       require('mason').setup()
-      require('mason-tool-installer').setup { ensure_installed = vim.tbl_keys(servers or {}) }
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            lspconfig[server_name].setup({ capabilities = capabilities })
           end
         }
       }
@@ -225,7 +190,6 @@ require('lazy').setup({
       },
       'saadparwaiz1/cmp_luasnip',
       'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-path',
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-nvim-lsp-signature-help'
     },
@@ -251,9 +215,8 @@ require('lazy').setup({
           ['<C-Space>'] = cmp.mapping.complete {}
         },
         sources = {
-          { name = 'nvim_lsp' },
           { name = 'nvim_lsp_signature_help' },
-          { name = 'path' },
+          { name = 'nvim_lsp' },
           { name = 'buffer' }
         }
       }
