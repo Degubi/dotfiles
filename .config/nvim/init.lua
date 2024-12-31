@@ -43,238 +43,238 @@ vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 vim.api.nvim_create_autocmd('TextYankPost', {
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function() vim.highlight.on_yank() end
+    group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+    callback = function() vim.highlight.on_yank() end
 })
 
 vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = { '*' },
-  callback = function()
-    local cursor = vim.fn.getpos('.')
-    vim.cmd([[%s/\s\+$//e]])
-    vim.fn.setpos('.', cursor)
-  end
+    pattern = { '*' },
+    callback = function()
+        local cursor = vim.fn.getpos('.')
+        vim.cmd([[%s/\s\+$//e]])
+        vim.fn.setpos('.', cursor)
+    end
 })
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', 'https://github.com/folke/lazy.nvim.git', lazypath }
-  if vim.v.shell_error ~= 0 then
-    error('Error cloning lazy.nvim:\n' .. out)
-  end
+    local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', 'https://github.com/folke/lazy.nvim.git', lazypath }
+    if vim.v.shell_error ~= 0 then
+        error('Error cloning lazy.nvim:\n' .. out)
+    end
 end
 vim.o.rtp = lazypath .. ',' .. vim.o.rtp
 
 require('lazy').setup({
-  {
-    'nvim-telescope/telescope.nvim',
-    event = 'VimEnter',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope-ui-select.nvim'
-    },
-    config = function()
-      local telescope = require('telescope')
+    {
+        'nvim-telescope/telescope.nvim',
+        event = 'VimEnter',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-ui-select.nvim'
+        },
+        config = function()
+            local telescope = require('telescope')
 
-      telescope.setup {
-        extensions = {
-          ['ui-select'] = {
-            require('telescope.themes').get_dropdown()
-          }
-        },
-        defaults = {
-          preview = { hide_on_startup = true }
-        },
-        pickers = {
-          live_grep = { previewer = true },
-          lsp_references = { previewer = true },
-          buffers = {
-            mappings = {
-              n = {
-                ['dd'] = require('telescope.actions').delete_buffer
-              }
+            telescope.setup {
+                extensions = {
+                    ['ui-select'] = {
+                        require('telescope.themes').get_dropdown()
+                    }
+                },
+                defaults = {
+                    preview = { hide_on_startup = true }
+                },
+                pickers = {
+                    live_grep = { previewer = true },
+                    lsp_references = { previewer = true },
+                    buffers = {
+                        mappings = {
+                            n = {
+                                ['dd'] = require('telescope.actions').delete_buffer
+                            }
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
 
-      pcall(telescope.load_extension, 'fzf')
-      pcall(telescope.load_extension, 'ui-select')
+            pcall(telescope.load_extension, 'fzf')
+            pcall(telescope.load_extension, 'ui-select')
 
-      local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>sf', builtin.find_files)
-      vim.keymap.set('n', '<leader>sg', function() builtin.live_grep({ additional_args = { "--fixed-strings" } }) end)
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics)
-      vim.keymap.set('n', '<leader>sr', builtin.resume)
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers)
-    end
-  },
-  {
-    'neovim/nvim-lspconfig',
-    dependencies = {
-      { 'williamboman/mason.nvim', config = true },
-      'williamboman/mason-lspconfig.nvim',
-      { 'j-hui/fidget.nvim', opts = {} },
-      'hrsh7th/cmp-nvim-lsp'
-    },
-    config = function()
-      vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
-        callback = function(event)
-          local builtin = require('telescope.builtin')
-
-          vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = event.buf })
-          vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = event.buf })
-          vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
-          vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>ne', vim.diagnostic.goto_next, { buffer = event.buf })
-          vim.keymap.set('n', '<leader>pe', vim.diagnostic.goto_prev, { buffer = event.buf })
-
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
-
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
-
-            vim.api.nvim_create_autocmd('LspDetach', {
-              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-              callback = function(event2)
-                vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-              end
-            })
-          end
+            local builtin = require('telescope.builtin')
+            vim.keymap.set('n', '<leader>sf', builtin.find_files)
+            vim.keymap.set('n', '<leader>sg', function() builtin.live_grep({ additional_args = { '--fixed-strings' } }) end)
+            vim.keymap.set('n', '<leader>sd', builtin.diagnostics)
+            vim.keymap.set('n', '<leader>sr', builtin.resume)
+            vim.keymap.set('n', '<leader><leader>', builtin.buffers)
         end
-      })
-
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      local lspconfig = require('lspconfig')
-
-      require('mason').setup()
-      require('mason-lspconfig').setup {
-        handlers = {
-          function(server_name)
-            lspconfig[server_name].setup({ capabilities = capabilities })
-          end
-        }
-      }
-    end
-  },
-  {
-    'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
-    dependencies = {
-      {
-        'L3MON4D3/LuaSnip',
-        build = (function()
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-            return
-          end
-          return 'make install_jsregexp'
-        end)(),
-        dependencies = {}
-      },
-      'saadparwaiz1/cmp_luasnip',
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-nvim-lsp-signature-help'
     },
-    config = function()
-      local cmp = require('cmp')
-      local luasnip = require('luasnip')
-      luasnip.config.setup {}
+    {
+        'neovim/nvim-lspconfig',
+        dependencies = {
+            { 'williamboman/mason.nvim', config = true },
+            'williamboman/mason-lspconfig.nvim',
+            { 'j-hui/fidget.nvim', opts = {} },
+            'hrsh7th/cmp-nvim-lsp'
+        },
+        config = function()
+            vim.api.nvim_create_autocmd('LspAttach', {
+                group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
+                callback = function(event)
+                    local builtin = require('telescope.builtin')
 
-      cmp.setup {
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end
-        },
-        completion = {
-          autocomplete = false,
-          completeopt = 'menu,menuone,noinsert'
-        },
-        mapping = cmp.mapping.preset.insert {
-          ['<C-j>'] = cmp.mapping.select_next_item(),
-          ['<C-k>'] = cmp.mapping.select_prev_item(),
-          ['<CR>'] = cmp.mapping.confirm { select = true },
-          ['<C-Space>'] = cmp.mapping.complete {}
-        },
-        sources = {
-          { name = 'nvim_lsp_signature_help' },
-          { name = 'nvim_lsp' },
-          { name = 'buffer' }
-        }
-      }
-    end
-  },
-  {
-    'folke/tokyonight.nvim',
-    priority = 1000,
-    opts = {
-      styles = {
-        comments = { italic = false },
-        keywords = { italic = false }
-      },
-      on_colors = function(colors) colors.bg = '#16161e' end
+                    vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = event.buf })
+                    vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = event.buf })
+                    vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
+                    vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
+                    vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
+                    vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
+                    vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
+                    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
+                    vim.keymap.set('n', '<leader>ne', vim.diagnostic.goto_next, { buffer = event.buf })
+                    vim.keymap.set('n', '<leader>pe', vim.diagnostic.goto_prev, { buffer = event.buf })
+
+                    local client = vim.lsp.get_client_by_id(event.data.client_id)
+                    if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+                        local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+
+                        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+                            buffer = event.buf,
+                            group = highlight_augroup,
+                            callback = vim.lsp.buf.document_highlight,
+                        })
+
+                        vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+                            buffer = event.buf,
+                            group = highlight_augroup,
+                            callback = vim.lsp.buf.clear_references,
+                        })
+
+                        vim.api.nvim_create_autocmd('LspDetach', {
+                            group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+                            callback = function(event2)
+                                vim.lsp.buf.clear_references()
+                                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+                            end
+                        })
+                    end
+                end
+            })
+
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            local lspconfig = require('lspconfig')
+
+            require('mason').setup()
+            require('mason-lspconfig').setup {
+                handlers = {
+                    function(server_name)
+                        lspconfig[server_name].setup({ capabilities = capabilities })
+                    end
+                }
+            }
+        end
     },
-    init = function()
-      vim.cmd.colorscheme 'tokyonight-night'
-      vim.cmd.hi 'Comment gui=none'
-    end
-  },
-  {
-    'echasnovski/mini.nvim',
-    config = function()
-      require('mini.ai').setup { n_lines = 500 }
+    {
+        'hrsh7th/nvim-cmp',
+        event = 'InsertEnter',
+        dependencies = {
+            {
+                'L3MON4D3/LuaSnip',
+                build = (function()
+                    if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+                        return
+                    end
+                    return 'make install_jsregexp'
+                end)(),
+                dependencies = {}
+            },
+            'saadparwaiz1/cmp_luasnip',
+            'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-nvim-lsp-signature-help'
+        },
+        config = function()
+            local cmp = require('cmp')
+            local luasnip = require('luasnip')
+            luasnip.config.setup {}
 
-      local statusline = require('mini.statusline')
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-      statusline.section_location = function() return '%2l:%-2v' end
-    end
-  },
-  {
-    'nvim-treesitter/nvim-treesitter',
-    build = ':TSUpdate',
-    main = 'nvim-treesitter.configs',
-    opts = {
-      auto_install = true,
-      highlight = {
-          enable = true,
-          additional_vim_regex_highlighting = false
-      }
+            cmp.setup {
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end
+                },
+                completion = {
+                    autocomplete = false,
+                    completeopt = 'menu,menuone,noinsert'
+                },
+                mapping = cmp.mapping.preset.insert {
+                    ['<C-j>'] = cmp.mapping.select_next_item(),
+                    ['<C-k>'] = cmp.mapping.select_prev_item(),
+                    ['<CR>'] = cmp.mapping.confirm { select = true },
+                    ['<C-Space>'] = cmp.mapping.complete {}
+                },
+                sources = {
+                    { name = 'nvim_lsp_signature_help' },
+                    { name = 'nvim_lsp' },
+                    { name = 'buffer' }
+                }
+            }
+        end
+    },
+    {
+        'folke/tokyonight.nvim',
+        priority = 1000,
+        opts = {
+            styles = {
+                comments = { italic = false },
+                keywords = { italic = false }
+            },
+            on_colors = function(colors) colors.bg = '#16161e' end
+        },
+        init = function()
+            vim.cmd.colorscheme 'tokyonight-night'
+            vim.cmd.hi 'Comment gui=none'
+        end
+    },
+    {
+        'echasnovski/mini.nvim',
+        config = function()
+            require('mini.ai').setup { n_lines = 500 }
+
+            local statusline = require('mini.statusline')
+            statusline.setup { use_icons = vim.g.have_nerd_font }
+            statusline.section_location = function() return '%2l:%-2v' end
+        end
+    },
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
+        main = 'nvim-treesitter.configs',
+        opts = {
+            auto_install = true,
+            highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false
+            }
+        }
     }
-  }
 }, {
-  ui = {
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 '
+    ui = {
+        icons = vim.g.have_nerd_font and {} or {
+            cmd = '⌘',
+            config = '🛠',
+            event = '📅',
+            ft = '📂',
+            init = '⚙',
+            keys = '🗝',
+            plugin = '🔌',
+            runtime = '💻',
+            require = '🌙',
+            source = '📄',
+            start = '🚀',
+            task = '📌',
+            lazy = '💤 '
+        }
     }
-  }
 })
