@@ -56,12 +56,9 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     end
 })
 
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', 'https://github.com/folke/lazy.nvim.git', lazypath }
-    if vim.v.shell_error ~= 0 then
-        error('Error cloning lazy.nvim:\n' .. out)
-    end
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
+if not vim.uv.fs_stat(lazypath) then
+    vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', 'https://github.com/folke/lazy.nvim.git', lazypath })
 end
 vim.o.rtp = lazypath .. ',' .. vim.o.rtp
 
@@ -76,7 +73,7 @@ require('lazy').setup({
         config = function()
             local telescope = require('telescope')
 
-            telescope.setup {
+            telescope.setup({
                 extensions = {
                     ['ui-select'] = {
                         require('telescope.themes').get_dropdown()
@@ -96,7 +93,7 @@ require('lazy').setup({
                         }
                     }
                 }
-            }
+            })
 
             pcall(telescope.load_extension, 'fzf')
             pcall(telescope.load_extension, 'ui-select')
@@ -154,7 +151,7 @@ require('lazy').setup({
                             group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
                             callback = function(event2)
                                 vim.lsp.buf.clear_references()
-                                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+                                vim.api.nvim_clear_autocmds({ group = 'kickstart-lsp-highlight', buffer = event2.buf })
                             end
                         })
                     end
@@ -165,13 +162,13 @@ require('lazy').setup({
             local lspconfig = require('lspconfig')
 
             require('mason').setup()
-            require('mason-lspconfig').setup {
+            require('mason-lspconfig').setup({
                 handlers = {
                     function(server_name)
                         lspconfig[server_name].setup({ capabilities = capabilities })
                     end
                 }
-            }
+            })
         end
     },
     {
@@ -196,13 +193,11 @@ require('lazy').setup({
         config = function()
             local cmp = require('cmp')
             local luasnip = require('luasnip')
-            luasnip.config.setup {}
+            luasnip.config.setup({})
 
-            cmp.setup {
+            cmp.setup({
                 snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end
+                    expand = function(args) luasnip.lsp_expand(args.body) end
                 },
                 completion = {
                     autocomplete = false,
@@ -219,7 +214,7 @@ require('lazy').setup({
                     { name = 'nvim_lsp' },
                     { name = 'buffer' }
                 }
-            }
+            })
         end
     },
     {
@@ -233,17 +228,17 @@ require('lazy').setup({
             on_colors = function(colors) colors.bg = '#16161e' end
         },
         init = function()
-            vim.cmd.colorscheme 'tokyonight-night'
-            vim.cmd.hi 'Comment gui=none'
+            vim.cmd.colorscheme('tokyonight-night')
+            vim.cmd.hi('Comment gui=none')
         end
     },
     {
         'echasnovski/mini.nvim',
         config = function()
-            require('mini.ai').setup { n_lines = 500 }
+            require('mini.ai').setup({ n_lines = 500 })
 
             local statusline = require('mini.statusline')
-            statusline.setup { use_icons = vim.g.have_nerd_font }
+            statusline.setup()
             statusline.section_location = function() return '%2l:%-2v' end
         end
     },
@@ -261,7 +256,7 @@ require('lazy').setup({
     }
 }, {
     ui = {
-        icons = vim.g.have_nerd_font and {} or {
+        icons = {
             cmd = '⌘',
             config = '🛠',
             event = '📅',
