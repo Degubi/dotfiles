@@ -93,6 +93,8 @@ require('lazy').setup({
                 pickers = {
                     live_grep = { previewer = true },
                     lsp_references = { previewer = true },
+                    lsp_definitions = { previewer = true },
+                    lsp_implementations = { previewer = true },
                     buffers = {
                         mappings = {
                             n = {
