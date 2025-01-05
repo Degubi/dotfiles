@@ -8,7 +8,6 @@ vim.g.netrw_banner = 0
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = 'a'
-vim.o.showmode = false
 vim.o.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 vim.o.undofile = true
@@ -30,6 +29,15 @@ vim.o.expandtab = true
 vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.wrap = false
+vim.o.statusline = table.concat({
+    ' %f',
+    '%r',
+    '%m',
+    '%=',
+    ('%%#PmenuSel#%s%%*'):format(' %{&filetype}'),
+    ('%%#PmenuSel#[%s] %%*'):format('%{&fileformat}'),
+    ('%%#Search#%s%%*'):format(' %l:%c ')
+})
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
@@ -225,21 +233,14 @@ require('lazy').setup({
                 comments = { italic = false },
                 keywords = { italic = false }
             },
-            on_colors = function(colors) colors.bg = '#16161e' end
+            on_colors = function(colors)
+                colors.bg = '#16161e'
+                colors.bg_statusline = '#292e42'
+            end
         },
         init = function()
             vim.cmd.colorscheme('tokyonight-night')
             vim.cmd.hi('Comment gui=none')
-        end
-    },
-    {
-        'echasnovski/mini.nvim',
-        config = function()
-            require('mini.ai').setup({ n_lines = 500 })
-
-            local statusline = require('mini.statusline')
-            statusline.setup()
-            statusline.section_location = function() return '%2l:%-2v' end
         end
     },
     {
