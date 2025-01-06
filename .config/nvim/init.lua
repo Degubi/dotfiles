@@ -246,6 +246,10 @@ require('lazy').setup({
         end
     },
     {
+        'echasnovski/mini.nvim',
+        config = function() require('mini.ai').setup({ n_lines = 500 }) end
+    },
+    {
         'nvim-treesitter/nvim-treesitter',
         build = ':TSUpdate',
         main = 'nvim-treesitter.configs',
