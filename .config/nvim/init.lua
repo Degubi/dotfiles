@@ -136,10 +136,8 @@ require('lazy').setup({
                     vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
                     vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
                     vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
-                    vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf })
+                    vim.keymap.set({ 'n', 'v' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf })
                     vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
-                    vim.keymap.set('n', '<leader>ne', vim.diagnostic.goto_next, { buffer = event.buf })
-                    vim.keymap.set('n', '<leader>pe', vim.diagnostic.goto_prev, { buffer = event.buf })
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
