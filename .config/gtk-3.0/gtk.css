@@ -1,0 +1,11 @@
+terminal-window notebook > header.top button {
+    padding: 0px;
+    border: none;
+    min-height: 0px;
+}
+
+terminal-window notebook > header.top > tabs > tab {
+    margin: 0px;
+    padding: 0px;
+    min-height: 0px;
+}
