@@ -50,6 +50,8 @@ vim.keymap.set('n', '<S-h>', '<cmd>bp<CR>')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+
 vim.api.nvim_create_autocmd('TextYankPost', {
     group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
     callback = function() vim.highlight.on_yank() end
@@ -223,6 +225,10 @@ require('lazy').setup({
                     { name = 'nvim_lsp_signature_help' },
                     { name = 'nvim_lsp' },
                     { name = 'buffer' }
+                },
+                window = {
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered()
                 }
             })
         end
