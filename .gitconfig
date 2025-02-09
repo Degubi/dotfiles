@@ -1,9 +1,9 @@
 [user]
-	name = Degubi
-	email = gergonoorbi@gmail.com
+    name = Degubi
+    email = gergonoorbi@gmail.com
 [credential]
-	helper = store
+    helper = store
 [fetch]
-	prune = true
+    prune = true
 [core]
-	autocrlf = true
+    autocrlf = false
