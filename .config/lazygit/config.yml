@@ -1,5 +1,6 @@
 gui:
   sidePanelWidth: 0.2
+  switchTabsWithPanelJumpKeys: true
 git:
   paging:
     colorArg: always
