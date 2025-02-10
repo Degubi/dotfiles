@@ -22,6 +22,7 @@ vim.o.list = true
 vim.o.listchars = 'tab:» ,trail:·,nbsp:␣'
 vim.o.cursorline = true
 vim.o.scrolloff = 5
+vim.o.sidescrolloff = 10
 vim.o.endofline = false
 vim.o.fixendofline = false
 vim.o.tabstop = 4
