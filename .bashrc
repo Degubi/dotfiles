@@ -8,6 +8,7 @@ shopt -s histappend
 shopt -s checkwinsize
 set -o vi
 alias vim='nvim'
+alias p='cd $(find ~/Prog -maxdepth 1 -type d | fzf) && clear'
 
 export PATH="$PATH:/opt/apache-maven-3.9.9/bin"
 . "$HOME/.cargo/env"
