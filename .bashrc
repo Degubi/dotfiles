@@ -8,7 +8,12 @@ shopt -s histappend
 shopt -s checkwinsize
 set -o vi
 alias vim='nvim'
-alias p='cd $(find ~/Prog -maxdepth 1 -type d | fzf) && clear'
+alias p='cd $(find ~/Prog -maxdepth 1 -type d | fzf)
+gnome-terminal --tab --title="Git" -- bash -c "lazygit; bash"
+gnome-terminal --tab --title="Terminal" --
+clear
+echo -en "\033]0;Vim\a"
+nvim'
 
 export PATH="$PATH:/opt/apache-maven-3.9.9/bin"
 . "$HOME/.cargo/env"
@@ -27,12 +32,6 @@ else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt
-
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1" ;;
-*) ;;
-esac
 
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
