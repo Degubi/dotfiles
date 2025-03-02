@@ -4,6 +4,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = false
 vim.g.netrw_banner = 0
+vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
 
 vim.o.number = true
 vim.o.relativenumber = true
