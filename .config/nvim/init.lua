@@ -179,7 +179,21 @@ require('lazy').setup({
             require('mason-lspconfig').setup({
                 handlers = {
                     function(server_name)
-                        lspconfig[server_name].setup({ capabilities = capabilities })
+                        local options = server_name ~= 'jdtls' and { capabilities = capabilities } or {
+                            capabilities = capabilities,
+                            settings = {
+                                java = {
+                                    sources = {
+                                        organizeImports = {
+                                            starThreshold = 1,
+                                            staticStarThreshold = 1
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        lspconfig[server_name].setup(options)
                     end
                 }
             })
