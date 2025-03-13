@@ -1,7 +1,6 @@
 vim.cmd('syntax off')
 
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = false
 vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
@@ -53,11 +52,6 @@ vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
-
-vim.api.nvim_create_autocmd('TextYankPost', {
-    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
-    callback = function() vim.highlight.on_yank() end
-})
 
 vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = { '*' },
