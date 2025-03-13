@@ -54,11 +54,29 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 
 vim.api.nvim_create_autocmd('BufWritePre', {
-    pattern = { '*' },
+    pattern = '*',
     callback = function()
         local cursor = vim.fn.getpos('.')
         vim.cmd([[%s/\s\+$//e]])
         vim.fn.setpos('.', cursor)
+    end
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
+    callback = function(event)
+        local builtin = require('telescope.builtin')
+
+        vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = event.buf })
+        vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = event.buf })
+        vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
+        vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
+        vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
+        vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
+        vim.keymap.set({ 'n', 'v' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf })
+        vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
+
+        vim.lsp.get_client_by_id(event.data.client_id).server_capabilities.semanticTokensProvider = nil
     end
 })
 
@@ -123,49 +141,6 @@ require('lazy').setup({
             'hrsh7th/cmp-nvim-lsp'
         },
         config = function()
-            vim.api.nvim_create_autocmd('LspAttach', {
-                group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
-                callback = function(event)
-                    local builtin = require('telescope.builtin')
-
-                    vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = event.buf })
-                    vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = event.buf })
-                    vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
-                    vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
-                    vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
-                    vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
-                    vim.keymap.set({ 'n', 'v' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf })
-                    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
-
-                    local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    client.server_capabilities.semanticTokensProvider = nil
-
-                    if client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-                        local highlight_augroup = vim.api.nvim_create_augroup('lsp-highlight', { clear = false })
-
-                        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-                            buffer = event.buf,
-                            group = highlight_augroup,
-                            callback = vim.lsp.buf.document_highlight,
-                        })
-
-                        vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-                            buffer = event.buf,
-                            group = highlight_augroup,
-                            callback = vim.lsp.buf.clear_references,
-                        })
-
-                        vim.api.nvim_create_autocmd('LspDetach', {
-                            group = vim.api.nvim_create_augroup('lsp-detach', { clear = true }),
-                            callback = function(event2)
-                                vim.lsp.buf.clear_references()
-                                vim.api.nvim_clear_autocmds({ group = 'lsp-highlight', buffer = event2.buf })
-                            end
-                        })
-                    end
-                end
-            })
-
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
             local lspconfig = require('lspconfig')
 
@@ -185,7 +160,7 @@ require('lazy').setup({
                                     }
                                 }
                             }
-                        };
+                        }
 
                         lspconfig[server_name].setup(options)
                     end
@@ -209,12 +184,11 @@ require('lazy').setup({
                     autocomplete = false,
                     completeopt = 'menu,menuone,noinsert'
                 },
-                mapping = cmp.mapping.preset.insert {
-                    ['<C-j>'] = cmp.mapping.select_next_item(),
-                    ['<C-k>'] = cmp.mapping.select_prev_item(),
-                    ['<CR>'] = cmp.mapping.confirm { select = true },
-                    ['<C-Space>'] = cmp.mapping.complete {}
-                },
+                mapping = cmp.mapping.preset.insert({
+                    ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+                    ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+                    ['<C-Space>'] = cmp.mapping.complete()
+                }),
                 sources = {
                     { name = 'nvim_lsp_signature_help' },
                     { name = 'nvim_lsp' },
@@ -264,19 +238,9 @@ require('lazy').setup({
 }, {
     ui = {
         icons = {
-            cmd = '⌘',
-            config = '🛠',
-            event = '📅',
-            ft = '📂',
-            init = '⚙',
-            keys = '🗝',
-            plugin = '🔌',
-            runtime = '💻',
-            require = '🌙',
-            source = '📄',
-            start = '🚀',
-            task = '📌',
-            lazy = '💤 '
+            cmd = '⌘', config = '🛠', event = '📅', ft = '📂', init = '⚙',
+            keys = '🗝', plugin = '🔌', runtime = '💻', require = '🌙',
+            source = '📄', start = '🚀', task = '📌', lazy = '💤 '
         }
     }
 })
