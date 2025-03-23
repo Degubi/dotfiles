@@ -152,6 +152,7 @@ require('lazy').setup({
                             capabilities = capabilities,
                             settings = {
                                 java = {
+                                    format = { insertSpaces = true },
                                     sources = {
                                         organizeImports = {
                                             starThreshold = 1,
