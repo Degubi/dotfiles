@@ -50,8 +50,14 @@ vim.keymap.set('n', '<S-l>', '<cmd>bn<CR>')
 vim.keymap.set('n', '<S-h>', '<cmd>bp<CR>')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.del('n', 'grn')
+vim.keymap.del('n', 'grr')
+vim.keymap.del('n', 'gri')
+vim.keymap.del('n', 'gra')
 
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+local hover = vim.lsp.buf.hover
+vim.lsp.buf.hover = function() hover({ border = 'rounded' }) end
+vim.diagnostic.config({ virtual_text = true })
 
 vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = '*',
