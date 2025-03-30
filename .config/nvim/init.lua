@@ -7,7 +7,7 @@ vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
 
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.mouse = 'a'
+vim.o.winborder = 'rounded'
 vim.o.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 vim.o.undofile = true
@@ -55,8 +55,6 @@ vim.keymap.del('n', 'grr')
 vim.keymap.del('n', 'gri')
 vim.keymap.del('n', 'gra')
 
-local hover = vim.lsp.buf.hover
-vim.lsp.buf.hover = function() hover({ border = 'rounded' }) end
 vim.diagnostic.config({ virtual_text = true })
 
 vim.api.nvim_create_autocmd('BufWritePre', {
@@ -109,9 +107,7 @@ require('lazy').setup({
                         require('telescope.themes').get_dropdown()
                     }
                 },
-                defaults = {
-                    preview = { hide_on_startup = true }
-                },
+                defaults = { preview = { hide_on_startup = true }},
                 pickers = {
                     live_grep = { previewer = true },
                     lsp_references = { previewer = true },
@@ -144,10 +140,10 @@ require('lazy').setup({
             { 'williamboman/mason.nvim', config = true },
             'williamboman/mason-lspconfig.nvim',
             { 'j-hui/fidget.nvim', opts = {} },
-            'hrsh7th/cmp-nvim-lsp'
+            'saghen/blink.cmp'
         },
         config = function()
-            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            local capabilities = require('blink.cmp').get_lsp_capabilities()
             local lspconfig = require('lspconfig')
 
             require('mason').setup()
@@ -160,10 +156,7 @@ require('lazy').setup({
                                 java = {
                                     format = { insertSpaces = true },
                                     sources = {
-                                        organizeImports = {
-                                            starThreshold = 1,
-                                            staticStarThreshold = 1
-                                        }
+                                        organizeImports = { starThreshold = 1, staticStarThreshold = 1 }
                                     }
                                 }
                             }
@@ -176,46 +169,34 @@ require('lazy').setup({
         end
     },
     {
-        'hrsh7th/nvim-cmp',
-        event = 'InsertEnter',
-        dependencies = {
-            'hrsh7th/cmp-nvim-lsp',
-            'hrsh7th/cmp-buffer',
-            'hrsh7th/cmp-nvim-lsp-signature-help'
-        },
-        config = function()
-            local cmp = require('cmp')
-
-            cmp.setup({
-                completion = {
-                    autocomplete = false,
-                    completeopt = 'menu,menuone,noinsert'
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-                    ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-                    ['<C-Space>'] = cmp.mapping.complete()
-                }),
-                sources = {
-                    { name = 'nvim_lsp_signature_help' },
-                    { name = 'nvim_lsp' },
-                    { name = 'buffer' }
-                },
-                window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered()
+        'saghen/blink.cmp',
+        version = '1.*',
+        opts = {
+            cmdline = { enabled = false },
+            sources = { default = { 'lsp', 'buffer' }},
+            signature = { enabled = true },
+            completion = {
+                accept = { auto_brackets = { enabled = false }},
+                documentation = { auto_show = true, auto_show_delay_ms = 0 },
+                list = { selection = { auto_insert = false }},
+                menu = {
+                    auto_show = false,
+                    max_height = 30,
+                    draw = { columns = {{ 'label', 'label_description', gap = 1 }, { 'kind' }}}
                 }
-            })
-        end
+            },
+            keymap = {
+                preset = 'default',
+                [ '<C-k>' ] = { 'select_prev', 'fallback' },
+                [ '<C-j>' ] = { 'select_next', 'fallback' }
+            }
+        }
     },
     {
         'folke/tokyonight.nvim',
         priority = 1000,
         opts = {
-            styles = {
-                comments = { italic = false },
-                keywords = { italic = false }
-            },
+            styles = { comments = { italic = false }, keywords = { italic = false }},
             on_colors = function(colors)
                 colors.bg = '#16161e'
                 colors.bg_statusline = '#292e42'
@@ -236,10 +217,7 @@ require('lazy').setup({
         main = 'nvim-treesitter.configs',
         opts = {
             auto_install = true,
-            highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false
-            }
+            highlight = { enable = true, additional_vim_regex_highlighting = false }
         }
     }
 }, {
