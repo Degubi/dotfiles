@@ -91,35 +91,20 @@ end
 vim.o.rtp = lazypath .. ',' .. vim.o.rtp
 
 require('lazy').setup({
+    { 'nvim-lua/plenary.nvim' },
     {
         'nvim-telescope/telescope.nvim',
-        event = 'VimEnter',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            'nvim-telescope/telescope-ui-select.nvim'
-        },
         config = function()
             local telescope = require('telescope')
 
             telescope.setup({
                 extensions = {
-                    ['ui-select'] = {
-                        require('telescope.themes').get_dropdown()
-                    }
+                    [ 'ui-select' ] = require('telescope.themes').get_dropdown()
                 },
-                defaults = { preview = { hide_on_startup = true }},
                 pickers = {
-                    live_grep = { previewer = true },
-                    lsp_references = { previewer = true },
-                    lsp_definitions = { previewer = true },
-                    lsp_implementations = { previewer = true },
-                    buffers = {
-                        mappings = {
-                            n = {
-                                ['dd'] = require('telescope.actions').delete_buffer
-                            }
-                        }
-                    }
+                    find_files = { previewer = false },
+                    diagnostics = { previewer = false },
+                    buffers = { previewer = false }
                 }
             })
 
@@ -134,40 +119,7 @@ require('lazy').setup({
             vim.keymap.set('n', '<leader><leader>', builtin.buffers)
         end
     },
-    {
-        'neovim/nvim-lspconfig',
-        dependencies = {
-            { 'williamboman/mason.nvim', config = true },
-            'williamboman/mason-lspconfig.nvim',
-            { 'j-hui/fidget.nvim', opts = {} },
-            'saghen/blink.cmp'
-        },
-        config = function()
-            local capabilities = require('blink.cmp').get_lsp_capabilities()
-            local lspconfig = require('lspconfig')
-
-            require('mason').setup()
-            require('mason-lspconfig').setup({
-                handlers = {
-                    function(server_name)
-                        local options = server_name ~= 'jdtls' and { capabilities = capabilities } or {
-                            capabilities = capabilities,
-                            settings = {
-                                java = {
-                                    format = { insertSpaces = true },
-                                    sources = {
-                                        organizeImports = { starThreshold = 1, staticStarThreshold = 1 }
-                                    }
-                                }
-                            }
-                        }
-
-                        lspconfig[server_name].setup(options)
-                    end
-                }
-            })
-        end
-    },
+    { 'nvim-telescope/telescope-ui-select.nvim' },
     {
         'saghen/blink.cmp',
         version = '1.*',
@@ -192,6 +144,37 @@ require('lazy').setup({
             }
         }
     },
+    { 'neovim/nvim-lspconfig' },
+    { 'williamboman/mason.nvim', opts = {} },
+    {
+        'williamboman/mason-lspconfig.nvim',
+        config = function()
+            local capabilities = require('blink.cmp').get_lsp_capabilities()
+            local lspconfig = require('lspconfig')
+
+            require('mason-lspconfig').setup({
+                handlers = {
+                    function(server_name)
+                        local options = server_name ~= 'jdtls' and { capabilities = capabilities } or {
+                            capabilities = capabilities,
+                            settings = {
+                                java = {
+                                    format = { insertSpaces = true },
+                                    sources = {
+                                        organizeImports = { starThreshold = 1, staticStarThreshold = 1 }
+                                    }
+                                }
+                            }
+                        }
+
+                        lspconfig[server_name].setup(options)
+                    end
+                }
+            })
+        end
+    },
+    { 'j-hui/fidget.nvim', opts = {} },
+    { 'echasnovski/mini.ai', opts = { n_lines = 500 } },
     {
         'folke/tokyonight.nvim',
         priority = 1000,
@@ -206,10 +189,6 @@ require('lazy').setup({
             vim.cmd.colorscheme('tokyonight-night')
             vim.cmd.hi('Comment gui=none')
         end
-    },
-    {
-        'echasnovski/mini.ai',
-        config = function() require('mini.ai').setup({ n_lines = 500 }) end
     },
     {
         'nvim-treesitter/nvim-treesitter',
