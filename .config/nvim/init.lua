@@ -104,7 +104,10 @@ require('lazy').setup({
                 pickers = {
                     find_files = { previewer = false },
                     diagnostics = { previewer = false },
-                    buffers = { previewer = false }
+                    buffers = {
+                        previewer = false,
+                        mappings = { n = { [ 'dd' ] = 'delete_buffer' }}
+                    }
                 }
             })
 
