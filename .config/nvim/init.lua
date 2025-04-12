@@ -75,7 +75,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = event.buf })
         vim.keymap.set('n', 'gI', builtin.lsp_implementations, { buffer = event.buf })
         vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { buffer = event.buf })
-        vim.keymap.set('n', '<leader>ws', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
+        vim.keymap.set('n', '<leader>sw', builtin.lsp_dynamic_workspace_symbols, { buffer = event.buf })
         vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { buffer = event.buf })
         vim.keymap.set({ 'n', 'v' }, '<leader>q', vim.lsp.buf.code_action, { buffer = event.buf })
         vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { buffer = event.buf })
