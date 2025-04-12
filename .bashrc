@@ -8,12 +8,6 @@ shopt -s histappend
 shopt -s checkwinsize
 set -o vi
 alias vim='nvim'
-alias p='cd $(find ~/Prog -maxdepth 1 -type d | fzf)
-gnome-terminal --tab --title="Git" -- bash -c "lazygit; bash"
-gnome-terminal --tab --title="Terminal" --
-clear
-echo -en "\033]0;Vim\a"
-nvim'
 
 export PATH="$PATH:/opt/apache-maven-3.9.9/bin"
 . "$HOME/.cargo/env"

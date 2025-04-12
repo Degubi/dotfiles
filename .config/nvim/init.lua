@@ -1,5 +1,3 @@
-vim.cmd('syntax off')
-
 vim.g.mapleader = ' '
 vim.g.have_nerd_font = false
 vim.g.netrw_banner = 0
@@ -39,6 +37,7 @@ vim.o.statusline = table.concat({
     ('%%#PmenuSel#[%s] %%*'):format('%{&fileformat}'),
     ('%%#Search#%s%%*'):format(' %l:%c ')
 })
+vim.cmd.syntax('off')
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
