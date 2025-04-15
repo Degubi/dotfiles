@@ -152,7 +152,6 @@ require('lazy').setup({
         'williamboman/mason-lspconfig.nvim',
         config = function()
             local capabilities = require('blink.cmp').get_lsp_capabilities()
-            local lspconfig = require('lspconfig')
 
             require('mason-lspconfig').setup({
                 handlers = {
@@ -169,7 +168,8 @@ require('lazy').setup({
                             }
                         }
 
-                        lspconfig[server_name].setup(options)
+                        vim.lsp.config(server_name, options)
+                        vim.lsp.enable(server_name)
                     end
                 }
             })
