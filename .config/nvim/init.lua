@@ -147,9 +147,9 @@ require('lazy').setup({
         }
     },
     { 'neovim/nvim-lspconfig' },
-    { 'williamboman/mason.nvim', opts = {} },
+    { 'mason-org/mason.nvim', opts = {} },
     {
-        'williamboman/mason-lspconfig.nvim',
+        'mason-org/mason-lspconfig.nvim',
         config = function()
             local capabilities = require('blink.cmp').get_lsp_capabilities()
 
