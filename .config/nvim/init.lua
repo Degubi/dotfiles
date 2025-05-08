@@ -5,7 +5,7 @@ vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
 
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.winborder = 'rounded'
+vim.o.winborder = 'solid'
 vim.o.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 vim.o.undofile = true
@@ -115,7 +115,7 @@ require('lazy').setup({
 
             local builtin = require('telescope.builtin')
             vim.keymap.set('n', '<leader>sf', builtin.find_files)
-            vim.keymap.set('n', '<leader>sg', function() builtin.live_grep({ additional_args = { '--fixed-strings' } }) end)
+            vim.keymap.set('n', '<leader>sg', function() builtin.live_grep({ additional_args = { '--fixed-strings' }}) end)
             vim.keymap.set('n', '<leader>sd', builtin.diagnostics)
             vim.keymap.set('n', '<leader>sr', builtin.resume)
             vim.keymap.set('n', '<leader><leader>', builtin.buffers)
@@ -201,6 +201,7 @@ require('lazy').setup({
             on_colors = function(colors)
                 colors.bg = '#16161e'
                 colors.bg_statusline = '#292e42'
+                colors.bg_float = '#222228'
             end
         },
         init = function()
