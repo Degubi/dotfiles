@@ -169,7 +169,6 @@ require('lazy').setup({
                         }
 
                         vim.lsp.config(server_name, options)
-                        vim.lsp.enable(server_name)
                     end
                 }
             })
