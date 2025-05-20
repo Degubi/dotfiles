@@ -55,6 +55,16 @@ vim.keymap.del('n', 'gri')
 vim.keymap.del('n', 'gra')
 
 vim.diagnostic.config({ virtual_text = true })
+vim.lsp.config('jdtls', {
+    settings = {
+        java = {
+            format = { insertSpaces = true },
+            sources = {
+                organizeImports = { starThreshold = 1, staticStarThreshold = 1 }
+            }
+        }
+    }
+})
 
 vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = '*',
@@ -148,32 +158,7 @@ require('lazy').setup({
     },
     { 'neovim/nvim-lspconfig' },
     { 'mason-org/mason.nvim', opts = {} },
-    {
-        'mason-org/mason-lspconfig.nvim',
-        config = function()
-            local capabilities = require('blink.cmp').get_lsp_capabilities()
-
-            require('mason-lspconfig').setup({
-                handlers = {
-                    function(server_name)
-                        local options = server_name ~= 'jdtls' and { capabilities = capabilities } or {
-                            capabilities = capabilities,
-                            settings = {
-                                java = {
-                                    format = { insertSpaces = true },
-                                    sources = {
-                                        organizeImports = { starThreshold = 1, staticStarThreshold = 1 }
-                                    }
-                                }
-                            }
-                        }
-
-                        vim.lsp.config(server_name, options)
-                    end
-                }
-            })
-        end
-    },
+    { 'mason-org/mason-lspconfig.nvim', opts = {} },
     {
         'ThePrimeagen/harpoon',
         branch = 'harpoon2',
