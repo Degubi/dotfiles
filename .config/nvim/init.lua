@@ -33,6 +33,7 @@ vim.o.statusline = table.concat({
     '%r',
     '%m',
     '%=',
+    ('%s '):format(vim.fn.fnamemodify(vim.fn.getcwd(), ':t')),
     ('%%#PmenuSel#%s%%*'):format(' %{&filetype}'),
     ('%%#PmenuSel#[%s] %%*'):format('%{&fileformat}'),
     ('%%#Search#%s%%*'):format(' %l:%c ')
