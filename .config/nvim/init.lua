@@ -121,8 +121,7 @@ require('lazy').setup({
                 }
             })
 
-            pcall(telescope.load_extension, 'fzf')
-            pcall(telescope.load_extension, 'ui-select')
+            telescope.load_extension('ui-select')
 
             local builtin = require('telescope.builtin')
             vim.keymap.set('n', '<leader>sf', builtin.find_files)
@@ -158,8 +157,23 @@ require('lazy').setup({
         }
     },
     { 'neovim/nvim-lspconfig' },
-    { 'mason-org/mason.nvim', opts = {} },
-    { 'mason-org/mason-lspconfig.nvim', opts = {} },
+    {
+        'mason-org/mason.nvim',
+        config = function()
+            require('mason').setup()
+
+            local registry = require('mason-registry')
+            local package_to_lsp_names = {}
+
+            for _, pkg_spec in ipairs(registry.get_all_package_specs()) do
+                package_to_lsp_names[pkg_spec.name] = vim.tbl_get(pkg_spec, 'neovim', 'lspconfig')
+            end
+
+            for _, package_name in ipairs(registry.get_installed_package_names()) do
+                vim.lsp.enable(package_to_lsp_names[package_name])
+            end
+        end
+    },
     {
         'ThePrimeagen/harpoon',
         branch = 'harpoon2',
