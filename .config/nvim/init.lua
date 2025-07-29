@@ -191,7 +191,6 @@ require('lazy').setup({
         end
     },
     { 'j-hui/fidget.nvim', opts = {} },
-    { 'echasnovski/mini.ai', opts = { n_lines = 500 } },
     {
         'folke/tokyonight.nvim',
         priority = 1000,
