@@ -2,6 +2,7 @@ gui:
   sidePanelWidth: 0.2
   switchTabsWithPanelJumpKeys: true
   mainPanelSplitMode: horizontal
+  useHunkModeInStagingView: false
 git:
   paging:
     colorArg: always
