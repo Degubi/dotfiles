@@ -51,7 +51,7 @@ require('lazy').setup({
     { 'mason-org/mason.nvim' },
     { 'ThePrimeagen/harpoon', branch = 'harpoon2' },
     { 'j-hui/fidget.nvim' },
-    { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' }
+    { 'nvim-treesitter/nvim-treesitter', branch = 'main', build = ':TSUpdate' }
 }, {
     ui = {
         icons = {
@@ -143,16 +143,22 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     end
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = '*',
+    callback = function(event)
+        local parser_name = vim.treesitter.language.get_lang(event.match)
+
+        if parser_name then
+            pcall(vim.treesitter.start, event.buf, parser_name)
+        end
+    end
+})
+
 vim.diagnostic.config({ virtual_text = true })
 vim.lsp.config('jdtls', { settings = { java = {
     format = { insertSpaces = true },
     sources = { organizeImports = { starThreshold = 1, staticStarThreshold = 1 }}
 }}})
-
-require('nvim-treesitter.configs').setup({
-    auto_install = true,
-    highlight = { enable = true, additional_vim_regex_highlighting = false }
-})
 
 require('fidget').setup()
 require('mason').setup()
