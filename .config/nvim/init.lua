@@ -42,7 +42,7 @@ end
 vim.o.rtp = lazypath .. ',' .. vim.o.rtp
 
 require('lazy').setup({
-    { 'nvim-lua/plenary.nvim' },
+    { 'nvim-lua/plenary.nvim', commit = '857c5ac' },
     { 'folke/tokyonight.nvim' },
     { 'nvim-telescope/telescope.nvim' },
     { 'nvim-telescope/telescope-ui-select.nvim' },
