@@ -9,7 +9,6 @@ shopt -s checkwinsize
 set -o vi
 alias vim='nvim'
 
-export PATH="$PATH:/opt/apache-maven-3.9.9/bin"
 . "$HOME/.cargo/env"
 
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
