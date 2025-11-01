@@ -24,16 +24,7 @@ vim.o.shiftwidth = 4
 vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.wrap = false
-vim.o.statusline = table.concat({
-    ' %f',
-    '%r',
-    '%m',
-    '%=',
-    ('%s '):format(vim.fn.fnamemodify(vim.fn.getcwd(), ':t')),
-    ('%%#PmenuSel#%s%%*'):format(' %{&filetype}'),
-    ('%%#PmenuSel#[%s] %%*'):format('%{&fileformat}'),
-    ('%%#Search#%s%%*'):format(' %l:%c ')
-})
+vim.o.statusline = ' %f' .. '%r' .. '%m' .. '%= ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' %#PmenuSel# %{&filetype}%*' .. '%#PmenuSel#[%{&fileformat}] %*' .. '%#Search# %l:%c %*'
 
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazypath) then
