@@ -33,16 +33,16 @@ end
 vim.o.rtp = lazypath .. ',' .. vim.o.rtp
 
 require('lazy').setup({
-    { 'nvim-lua/plenary.nvim', commit = '857c5ac' },
-    { 'folke/tokyonight.nvim' },
-    { 'nvim-telescope/telescope.nvim' },
-    { 'nvim-telescope/telescope-ui-select.nvim' },
-    { 'saghen/blink.cmp', version = '1.*' },
-    { 'neovim/nvim-lspconfig' },
-    { 'mason-org/mason.nvim' },
-    { 'ThePrimeagen/harpoon', branch = 'harpoon2' },
-    { 'j-hui/fidget.nvim' },
-    { 'nvim-treesitter/nvim-treesitter', branch = 'main', build = ':TSUpdate' }
+    { 'https://github.com/nvim-lua/plenary.nvim', commit = '857c5ac' },
+    { 'https://github.com/folke/tokyonight.nvim' },
+    { 'https://github.com/nvim-telescope/telescope.nvim' },
+    { 'https://github.com/nvim-telescope/telescope-ui-select.nvim' },
+    { 'https://github.com/saghen/blink.cmp', version = '1.*' },
+    { 'https://github.com/neovim/nvim-lspconfig' },
+    { 'https://github.com/mason-org/mason.nvim' },
+    { 'https://github.com/ThePrimeagen/harpoon', branch = 'harpoon2' },
+    { 'https://github.com/j-hui/fidget.nvim' },
+    { 'https://github.com/nvim-treesitter/nvim-treesitter', branch = 'main', build = ':TSUpdate' }
 }, {
     ui = {
         icons = {
