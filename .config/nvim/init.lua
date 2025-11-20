@@ -154,15 +154,9 @@ vim.lsp.config('jdtls', { settings = { java = {
 require('fidget').setup()
 require('mason').setup()
 
-local registry = require('mason-registry')
-local package_to_lsp_names = {}
-
-for _, pkg_spec in ipairs(registry.get_all_package_specs()) do
-    package_to_lsp_names[pkg_spec.name] = vim.tbl_get(pkg_spec, 'neovim', 'lspconfig')
-end
-
-for _, package_name in ipairs(registry.get_installed_package_names()) do
-    vim.lsp.enable(package_to_lsp_names[package_name])
+local installedPacks = require('mason-registry').get_installed_packages()
+for _, pack in ipairs(installedPacks) do
+    vim.lsp.enable(pack.spec.neovim.lspconfig)
 end
 
 require('blink.cmp').setup({
