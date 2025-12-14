@@ -42,7 +42,7 @@ require('lazy').setup({
     { 'https://github.com/mason-org/mason.nvim' },
     { 'https://github.com/ThePrimeagen/harpoon', branch = 'harpoon2' },
     { 'https://github.com/j-hui/fidget.nvim' },
-    { 'https://github.com/nvim-treesitter/nvim-treesitter', branch = 'main', build = ':TSUpdate' }
+    { 'https://github.com/nvim-treesitter/nvim-treesitter', build = ':TSUpdate' }
 }, {
     ui = {
         icons = {
