@@ -26,32 +26,22 @@ vim.o.softtabstop = 4
 vim.o.wrap = false
 vim.o.statusline = ' %f' .. '%r' .. '%m' .. '%= ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' %#PmenuSel# %{&filetype}%*' .. '%#PmenuSel#[%{&fileformat}] %*' .. '%#Search# %l:%c %*'
 
-local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-if not vim.uv.fs_stat(lazypath) then
-    vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', 'https://github.com/folke/lazy.nvim.git', lazypath })
-end
-vim.o.rtp = lazypath .. ',' .. vim.o.rtp
-
-require('lazy').setup({
-    { 'https://github.com/nvim-lua/plenary.nvim', commit = '857c5ac' },
-    { 'https://github.com/folke/tokyonight.nvim' },
-    { 'https://github.com/nvim-telescope/telescope.nvim' },
-    { 'https://github.com/nvim-telescope/telescope-ui-select.nvim' },
-    { 'https://github.com/saghen/blink.cmp', version = '1.*' },
-    { 'https://github.com/neovim/nvim-lspconfig' },
-    { 'https://github.com/mason-org/mason.nvim' },
-    { 'https://github.com/ThePrimeagen/harpoon', branch = 'harpoon2' },
-    { 'https://github.com/j-hui/fidget.nvim' },
-    { 'https://github.com/nvim-treesitter/nvim-treesitter', build = ':TSUpdate' }
-}, {
-    ui = {
-        icons = {
-            cmd = '⌘', config = '🛠', event = '📅', ft = '📂', init = '⚙',
-            keys = '🗝', plugin = '🔌', runtime = '💻', require = '🌙',
-            source = '📄', start = '🚀', task = '📌', lazy = '💤 '
-        }
-    }
+vim.pack.add({
+    { src = 'https://github.com/nvim-lua/plenary.nvim', version = '857c5ac' },
+    { src = 'https://github.com/folke/tokyonight.nvim' },
+    { src = 'https://github.com/nvim-telescope/telescope.nvim' },
+    { src = 'https://github.com/nvim-telescope/telescope-ui-select.nvim' },
+    { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range('1.*') },
+    { src = 'https://github.com/neovim/nvim-lspconfig' },
+    { src = 'https://github.com/mason-org/mason.nvim' },
+    { src = 'https://github.com/j-hui/fidget.nvim' },
+    { src = 'https://github.com/nvim-treesitter/nvim-treesitter' }
 })
+
+vim.api.nvim_create_user_command('UpdatePlugins', function()
+    vim.pack.update()
+    vim.cmd.TSUpdate()
+end, {})
 
 require('tokyonight').setup({
     styles = { comments = { italic = false }, keywords = { italic = false }},
@@ -80,9 +70,6 @@ telescope_main.setup({
 telescope_main.load_extension('ui-select')
 
 local telescope = require('telescope.builtin')
-local harpoon = require('harpoon')
-harpoon.setup()
-
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>')
@@ -102,12 +89,6 @@ vim.keymap.set('n', '<leader>sg', function() telescope.live_grep({ additional_ar
 vim.keymap.set('n', '<leader>sd', telescope.diagnostics)
 vim.keymap.set('n', '<leader>sr', telescope.resume)
 vim.keymap.set('n', '<leader><leader>', telescope.buffers)
-vim.keymap.set('n', '<C-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-vim.keymap.set('n', '<leader>a', function() harpoon:list():add() end)
-vim.keymap.set('n', '<leader>1', function() harpoon:list():select(1) end)
-vim.keymap.set('n', '<leader>2', function() harpoon:list():select(2) end)
-vim.keymap.set('n', '<leader>3', function() harpoon:list():select(3) end)
-vim.keymap.set('n', '<leader>4', function() harpoon:list():select(4) end)
 
 vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
